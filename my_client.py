@@ -1,6 +1,38 @@
 import requests
 
 
+def add_heart_rate():
+    p1 = {
+        "patient_id": 2,
+        "heart_rate": "101"
+        }
+    p2 = {
+        "patient_id": "3",
+        "heart_rate": 60
+        }
+    p3 = {
+        "patient_id": 2,
+        "heart_rate": "90"
+        }
+    p4 = {
+        "patient_id": 1,
+        "heart_rate": "137"
+        }
+    r1 = requests.post("http://127.0.0.1:5000/api/heart_rate", json=p1)
+    r2 = requests.post("http://127.0.0.1:5000/api/heart_rate", json=p2)
+    r3 = requests.post("http://127.0.0.1:5000/api/heart_rate", json=p3)
+    r4 = requests.post("http://127.0.0.1:5000/api/heart_rate", json=p4)
+
+    print(r1.json())
+    print(r1.status_code)
+    print(r2.json())
+    print(r2.status_code)
+    print(r3.json())
+    print(r3.status_code)
+    print(r4.json())
+    print(r4.status_code)
+
+
 def add_patient():
     p1 = {
         "patient_id": 1,  # usually this would be the patient MRN
@@ -23,13 +55,14 @@ def add_patient():
     a1 = r1.json()
     a2 = r2.json()
     a3 = r3.json()
-    print(a1)
-    print(r1.status_code)
-    print(a2)
-    print(r2.status_code)
-    print(a3)
-    print(r3.status_code)
+    # print(a1)
+    # print(r1.status_code)
+    # print(a2)
+    # print(r2.status_code)
+    # print(a3)
+    # print(r3.status_code)
 
 
 if __name__ == "__main__":
     add_patient()
+    add_heart_rate()
