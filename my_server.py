@@ -121,11 +121,9 @@ def add_HR_data(index, heart_rate):
         patient_id = patient["patient_id"]
         logging.info("Tachycardic: ID: {}, HR: {}, Attending email: {}".format(
                      patient_id, heart_rate, email))
-        return jsonify("{}: {} has a HR of {} at {}".format(email, patient_id,
-                                                            heart_rate,
-                                                            timestamp))
+        return [email, timestamp]
     else:
-        return jsonify("not tachycardic")
+        return "not tachycardic"
 
 
 def find_patient(patient_id, patients):
@@ -191,7 +189,14 @@ def add_heart_rate():
     if index is False:
         return jsonify("ERROR: patient not on file, address invalid"), 404
 
-    return add_HR_data(index, heart_rate)
+    response = add_HR_data(index, heart_rate)
+    if response == "not tachycardic":
+        return jsonify(response)
+    else:
+        return jsonify("{}: {} has a HR of {} at {}".format(response[0],
+                                                            patient_id,
+                                                            heart_rate,
+                                                            response[1]))
 
 
 if __name__ == "__main__":
