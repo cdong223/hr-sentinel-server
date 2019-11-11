@@ -1,16 +1,5 @@
 import pytest
 
-list = [{"patient_id": 4},
-        {"patient_id": 5},
-        {"patient_id": 0},
-        {"patient_id": 10},
-        {"patient_id": 934},
-        {"patient_id": 298},
-        {"patient_id": 1000},
-        {"patient_id": 1},
-        {"patient_id": 439},
-        {"patient_id": 99}]
-
 
 @pytest.mark.parametrize("patient_id, expected", [
                                 (10, 3),
@@ -24,7 +13,7 @@ list = [{"patient_id": 4},
                                 (934, 4),
                                 (5, 1)
 ])
-def find_patient(patient_id, expected):
+def test_find_patient(patient_id, expected):
     """Unit test for the find_patient() function in my_server.py
 
     Args:
@@ -36,5 +25,15 @@ def find_patient(patient_id, expected):
         None
     """
     from my_server import find_patient
-    result = find_patient(patient_id)
+    patients = [{"patient_id": 4},
+                {"patient_id": 5},
+                {"patient_id": 0},
+                {"patient_id": 10},
+                {"patient_id": 934},
+                {"patient_id": 298},
+                {"patient_id": 1000},
+                {"patient_id": 1},
+                {"patient_id": 439},
+                {"patient_id": 99}]
+    result = find_patient(patient_id, patients)
     assert result == expected

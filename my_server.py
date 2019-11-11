@@ -82,6 +82,15 @@ def add_new_patient():
 
 
 def is_tachycardic(heart_rate, patient_age):  # Test
+    """Checks to see if heart rate is tachycardic considering age
+
+    Args:
+        heart_rate (int): heart rate of specified patient
+        patient_age (int): age of specified patient
+
+    Returns:
+        str: tachycardic or not tachycardic
+    """
     if 1 <= patient_age <= 2:
         threshold = 151
     elif 3 <= patient_age <= 4:
@@ -119,7 +128,7 @@ def add_HR_data(index, heart_rate):
         return jsonify("not tachycardic")
 
 
-def find_patient(patient_id):
+def find_patient(patient_id, patients):
     """Retrieves the index corresponding to a specified patient
 
     Args:
@@ -178,7 +187,7 @@ def add_heart_rate():
     if heart_rate is False:
         return jsonify("ERROR: Heart rate must be a number."), 400
 
-    index = find_patient(patient_id)
+    index = find_patient(patient_id, patients)
     if index is False:
         return jsonify("ERROR: patient not on file, address invalid"), 404
 
