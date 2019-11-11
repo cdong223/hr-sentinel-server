@@ -109,19 +109,15 @@ def is_tachycardic(heart_rate, patient_age):  # Test
         return "not tachycardic"
 
 
-def add_HR_data(index, heart_rate):
+def add_HR_data(index, heart_rate, timestamp, patients):
     patient = patients[index]
     patient["heart_rate"].append(heart_rate)
     status = is_tachycardic(heart_rate, patient["patient_age"])
     patient["status"] = status
-    timestamp = datetime.now()
     patient["time_stamp"] = timestamp
     if status == "tachycardic":
         email = patient["attending_email"]
-        patient_id = patient["patient_id"]
-        logging.info("Tachycardic: ID: {}, HR: {}, Attending email: {}".format(
-                     patient_id, heart_rate, email))
-        return [email, timestamp]
+        return email
     else:
         return "not tachycardic"
 
@@ -170,6 +166,7 @@ def add_heart_rate():
     Returns:
         JSON: either email for "not tachycardic"
     """
+    timestamp = datetime.now()
     in_data = request.get_json()
     good_info = validate_HR_data(in_data)
     if good_info is False:
@@ -189,14 +186,16 @@ def add_heart_rate():
     if index is False:
         return jsonify("ERROR: patient not on file, address invalid"), 404
 
-    response = add_HR_data(index, heart_rate)
+    response = add_HR_data(index, heart_rate, timestamp, patients)
     if response == "not tachycardic":
         return jsonify(response)
     else:
+        logging.info("Tachycardic: ID: {}, HR: {}, Attending email: {}".format(
+                     patient_id, heart_rate, response[0]))
         return jsonify("{}: {} has a HR of {} at {}".format(response[0],
                                                             patient_id,
                                                             heart_rate,
-                                                            response[1]))
+                                                            timestamp))
 
 
 if __name__ == "__main__":
