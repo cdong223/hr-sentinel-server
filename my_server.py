@@ -7,6 +7,11 @@ app = Flask(__name__)
 patients = []
 
 
+@app.route("/patients", methods=["GET"])
+def get_patients_list():
+    return jsonify(patients)
+
+
 def validate_numeric(input):  # test
     """Validates input to see if it's an int or integer numeric string
 
@@ -110,11 +115,23 @@ def is_tachycardic(heart_rate, patient_age):  # Test
 
 
 def add_HR_data(index, heart_rate, timestamp, patients):
+    """Adds posted heart rate with associated status and time stamp
+
+    Args:
+        index (int): index of patient to be located in list
+        heart_rate (int): heart rate measurement to be added
+        timestamp (datetime): date/time stamp to be added
+        patients (dictionary): list of patients in database
+
+    Returns:
+        str: email of attending if patient is tachycardic, "not tachycardic"
+             otherwise
+    """
     patient = patients[index]
     patient["heart_rate"].append(heart_rate)
     status = is_tachycardic(heart_rate, patient["patient_age"])
     patient["status"] = status
-    patient["time_stamp"] = timestamp
+    patient["time_stamp"].append(timestamp)
     if status == "tachycardic":
         email = patient["attending_email"]
         return email
@@ -127,6 +144,7 @@ def find_patient(patient_id, patients):
 
     Args:
         patient_id (int): ID of patient to be located in list
+        patients (dictionary): list of patients in database
 
     Returns:
         Boolean or int: Index corresponding to patient in list;
@@ -184,7 +202,7 @@ def add_heart_rate():
 
     index = find_patient(patient_id, patients)
     if index is False:
-        return jsonify("ERROR: patient not on file, address invalid"), 404
+        return jsonify("ERROR: patient not on file."), 400
 
     response = add_HR_data(index, heart_rate, timestamp, patients)
     if response == "not tachycardic":
@@ -196,6 +214,56 @@ def add_heart_rate():
                                                             patient_id,
                                                             heart_rate,
                                                             timestamp))
+
+
+def get_patient_status(index, patients):
+    """Retrieves most recent heart rate with associated status and time stamp
+
+    Args:
+        index (int): index of patient to be located in list
+        patients (dictionary): list of patients in database
+
+    Returns:
+        dictionary: if data available, contains HR, status, and time stamp
+        boolean: returns False if data not available
+    """
+    if len(patients[index]["heart_rate"]) == 0:
+        return False
+    heart_rate = patients[index]["heart_rate"][-1]
+    status = patients[index]["status"]
+    timestamp = patients[index]["time_stamp"][-1]
+    return_dictionary = {
+        "heart_rate": heart_rate,
+        "status": status,
+        "timestamp": timestamp
+        }
+    return return_dictionary
+
+
+@app.route("/api/status/<patient_id>", methods=["GET"])
+def get_status(patient_id):
+    """GET request for the most recent heart rate for the specified patient,
+       along with whether this patient is currently tachycardic based on this
+       heart rate as well as the most recent date/time stamp.
+
+    Args:
+        patient_id (int): ID of specified patient for GET request
+
+    Returns:
+        JSON: dictionary containing heart rate, status, and date/time stamp
+    """
+    patient_id = validate_numeric(patient_id)
+    if patient_id is False:
+        return jsonify("ERROR: ID must be a number, address invalid."), 404
+
+    index = find_patient(patient_id, patients)
+    if index is False:
+        return jsonify("ERROR: patient not on file, address invalid"), 404
+
+    return_dictionary = get_patient_status(index, patients)
+    if return_dictionary is False:
+        return jsonify("ERROR: Patient has no heart rate data on file"), 400
+    return jsonify(return_dictionary)
 
 
 if __name__ == "__main__":
