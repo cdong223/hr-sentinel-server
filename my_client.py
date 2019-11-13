@@ -7,16 +7,28 @@ def check_patients_list():
     print(a)
 
 
-def check_status():
-    r1 = requests.get("http://127.0.0.1:5000/api/status/1")
-    r2 = requests.get("http://127.0.0.1:5000/api/status/2")
-    r3 = requests.get("http://127.0.0.1:5000/api/status/3")
+def check_HR_list():
+    r1 = requests.get("http://127.0.0.1:5000/api/heart_rate/1")
+    r2 = requests.get("http://127.0.0.1:5000/api/heart_rate/2")
+    r3 = requests.get("http://127.0.0.1:5000/api/heart_rate/3")
     print(r1.json())
     print(r1.status_code)
     print(r2.json())
     print(r2.status_code)
     print(r3.json())
     print(r3.status_code)
+
+
+def check_status():
+    r1 = requests.get("http://127.0.0.1:5000/api/status/1")
+    r2 = requests.get("http://127.0.0.1:5000/api/status/2")
+    r3 = requests.get("http://127.0.0.1:5000/api/status/3")
+    # print(r1.json())
+    # print(r1.status_code)
+    # print(r2.json())
+    # print(r2.status_code)
+    # print(r3.json())
+    # print(r3.status_code)
 
 
 def add_heart_rate():
@@ -84,4 +96,5 @@ if __name__ == "__main__":
     add_patient()
     add_heart_rate()
     # check_patients_list()
-    check_status()
+    # check_status()
+    check_HR_list()

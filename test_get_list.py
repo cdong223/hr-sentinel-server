@@ -3,43 +3,29 @@ from datetime import datetime
 
 
 @pytest.mark.parametrize("index, expected", [
-                (0, {"heart_rate": 100,
-                     "status": "not tachycardic",
-                     "timestamp": datetime(2019, 11, 11, 9, 35, 15, 176049)}),
+                (0, [100]),
                 (1, False),
-                (2, {"heart_rate": 115,
-                     "status": "not tachycardic",
-                     "timestamp": datetime(2019, 11, 11, 11, 44, 37, 701431)}),
-                (3, {"heart_rate": 134,
-                     "status": "tachycardic",
-                     "timestamp": datetime(2019, 11, 12, 12, 42, 27, 201431)}),
-                (4, {"heart_rate": 110,
-                     "status": "tachycardic",
-                     "timestamp": datetime(2019, 11, 11, 9, 35, 15, 176049)}),
-                (5, {"heart_rate": 70,
-                     "status": "not tachycardic",
-                     "timestamp": datetime(2019, 11, 12, 12, 42, 27, 201431)}),
-                (6, {"heart_rate": 131,
-                     "status": "tachycardic",
-                     "timestamp": datetime(2019, 11, 12, 12, 42, 27, 201431)}),
+                (2, [120, 115]),
+                (3, [120, 134]),
+                (4, [110]),
+                (5, [60, 65, 70]),
+                (6, [100, 120, 131]),
                 (7, False),
                 (8, False),
-                (9, {"heart_rate": 99,
-                     "status": "not tachycardic",
-                     "timestamp": datetime(2019, 11, 12, 12, 42, 27, 201431)})
+                (9, [100, 99])
 ])
-def test_get_patient_status(index, expected):
-    """Unit test for the get_patient_status() function in my_server.py
+def test_get_list(index, expected):
+    """Unit test for the get_list() function in my_server.py
 
     Args:
         index (int): index of patient to be located in list
-        expected (dictionary/boolean): if data available, contains HR, status,
-                                       and time stamp; False otherwise
+        expected (list/boolean): if data available, list of heart rates;
+                                 False otherwise
 
     Returns:
         None
     """
-    from my_server import get_patient_status
+    from my_server import get_list
     p1 = {
         "patient_id": 4,
         "attending_email": "p1@email.com",
@@ -129,5 +115,5 @@ def test_get_patient_status(index, expected):
         }
 
     patients = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
-    result = get_patient_status(index, patients)
+    result = get_list(index, patients)
     assert result == expected

@@ -266,6 +266,47 @@ def get_status(patient_id):
     return jsonify(return_dictionary)
 
 
+def get_list(index, patients):
+    """Retrieves list of previous heart rates for the specified patient
+
+    Args:
+        index (int): index of patient to be located in list
+        patients (dictionary): list of patients in database
+
+    Returns:
+        int: if data available, list of heart rate measurements
+        boolean: returns False if data not available
+    """
+    if len(patients[index]["heart_rate"]) == 0:
+        return False
+    list = patients[index]["heart_rate"]
+    return list
+
+
+@app.route("/api/heart_rate/<patient_id>", methods=["GET"])
+def get_HR_list(patient_id):
+    """GET request for list of previous heart rates for the specified patient
+
+    Args:
+        patient_id (int): ID of specified patient for GET request
+
+    Returns:
+        JSON: list of previous heart rate measurements
+    """
+    patient_id = validate_numeric(patient_id)
+    if patient_id is False:
+        return jsonify("ERROR: ID must be a number, address invalid."), 404
+
+    index = find_patient(patient_id, patients)
+    if index is False:
+        return jsonify("ERROR: patient not on file, address invalid"), 404
+
+    list = get_list(index, patients)
+    if list is False:
+        return jsonify("ERROR: Patient has no heart rate data on file"), 400
+    return jsonify(list)
+
+
 if __name__ == "__main__":
     logging.basicConfig(filename="sequence.log", level=logging.DEBUG,
                         filemode="w")
