@@ -86,7 +86,7 @@ def add_new_patient():
     return jsonify(return_dictionary)
 
 
-def is_tachycardic(heart_rate, patient_age):  # Test
+def is_tachycardic(heart_rate, patient_age):  # test
     """Checks to see if heart rate is tachycardic considering age
 
     Args:
@@ -114,7 +114,7 @@ def is_tachycardic(heart_rate, patient_age):  # Test
         return "not tachycardic"
 
 
-def add_HR_data(index, heart_rate, timestamp, patients):
+def add_HR_data(index, heart_rate, timestamp, patients):  # test
     """Adds posted heart rate with associated status and time stamp
 
     Args:
@@ -139,7 +139,7 @@ def add_HR_data(index, heart_rate, timestamp, patients):
         return "not tachycardic"
 
 
-def find_patient(patient_id, patients):
+def find_patient(patient_id, patients):  # test
     """Retrieves the index corresponding to a specified patient
 
     Args:
@@ -216,7 +216,7 @@ def add_heart_rate():
                                                             timestamp))
 
 
-def get_patient_status(index, patients):
+def get_patient_status(index, patients):  # test
     """Retrieves most recent heart rate with associated status and time stamp
 
     Args:
@@ -266,7 +266,7 @@ def get_status(patient_id):
     return jsonify(return_dictionary)
 
 
-def get_list(index, patients):
+def get_list(index, patients):  # test
     """Retrieves list of previous heart rates for the specified patient
 
     Args:
@@ -305,6 +305,47 @@ def get_HR_list(patient_id):
     if list is False:
         return jsonify("ERROR: Patient has no heart rate data on file"), 400
     return jsonify(list)
+
+
+def calc_avg_HR(list):  # test
+    """Calculates average of previous heart rates in list
+
+    Args:
+        list (int): list of previous heart rates
+
+    Returns:
+        int: average heart rate
+    """
+    sum = 0
+    for entry in list:
+        sum += entry
+    avg = sum / len(list)
+    return int(avg)
+
+
+@app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
+def get_avg_HR(patient_id):
+    """GET request for average of previous heart rates for specified patient
+
+    Args:
+        patient_id (int): ID of specified patient for GET request
+
+    Returns:
+        JSON: average heart rate, as an integer
+    """
+    patient_id = validate_numeric(patient_id)
+    if patient_id is False:
+        return jsonify("ERROR: ID must be a number, address invalid."), 404
+
+    index = find_patient(patient_id, patients)
+    if index is False:
+        return jsonify("ERROR: patient not on file, address invalid"), 404
+
+    list = get_list(index, patients)
+    if list is False:
+        return jsonify("ERROR: Patient has no heart rate data on file"), 400
+    avg_HR = calc_avg_HR(list)
+    return jsonify(avg_HR)
 
 
 if __name__ == "__main__":
