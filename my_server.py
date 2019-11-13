@@ -120,7 +120,7 @@ def add_HR_data(index, heart_rate, timestamp, patients):  # test
     Args:
         index (int): index of patient to be located in list
         heart_rate (int): heart rate measurement to be added
-        timestamp (datetime): date/time stamp to be added
+        timestamp (str): string date/time stamp to be added
         patients (dictionary): list of patients in database
 
     Returns:
@@ -184,7 +184,7 @@ def add_heart_rate():
     Returns:
         JSON: either email for "not tachycardic"
     """
-    timestamp = datetime.now()
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
     in_data = request.get_json()
     good_info = validate_HR_data(in_data)
     if good_info is False:
