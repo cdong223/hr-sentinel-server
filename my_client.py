@@ -6,6 +6,7 @@ def check_patients_list():
     a = r.json()
     print(a)
 
+
 def check_HR_list():
     r1 = requests.get("http://127.0.0.1:5000/api/heart_rate/1")
     r2 = requests.get("http://127.0.0.1:5000/api/heart_rate/2")
