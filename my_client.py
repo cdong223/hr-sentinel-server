@@ -7,6 +7,18 @@ def check_patients_list():
     print(a)
 
 
+def average_since():
+    p1 = {
+        "patient_id": 2,
+        "heart_rate_average_since": '2019-11-13 22:51:42.712118'
+        }
+    r1 = requests.post("http://127.0.0.1:5000/api/heart_rate/interval_average",
+                       json=p1)
+    a1 = r1.json()
+    print(a1)
+    print(r1.status_code)
+
+
 def check_avg_HR():
     r1 = requests.get("http://127.0.0.1:5000/api/heart_rate/average/1")
     r2 = requests.get("http://127.0.0.1:5000/api/heart_rate/average/2")
@@ -107,7 +119,8 @@ def add_patient():
 if __name__ == "__main__":
     add_patient()
     add_heart_rate()
-    # check_patients_list()
+    check_patients_list()
     # check_status()
     # check_HR_list()
     # check_avg_HR()
+    average_since()
