@@ -120,7 +120,7 @@ def add_HR_data(index, heart_rate, timestamp, patients):  # test
     Args:
         index (int): index of patient to be located in list
         heart_rate (int): heart rate measurement to be added
-        timestamp (datetime): date/time stamp to be added
+        timestamp (str): string date/time stamp to be added
         patients (dictionary): list of patients in database
 
     Returns:
@@ -184,7 +184,7 @@ def add_heart_rate():
     Returns:
         JSON: either email for "not tachycardic"
     """
-    timestamp = datetime.now()
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
     in_data = request.get_json()
     good_info = validate_HR_data(in_data)
     if good_info is False:
@@ -346,6 +346,101 @@ def get_avg_HR(patient_id):
         return jsonify("ERROR: Patient has no heart rate data on file"), 400
     avg_HR = calc_avg_HR(list)
     return jsonify(avg_HR)
+
+
+def validate_interval_avg_data(in_data):  # test
+    """Validates input to get_avg_since for correct fields
+
+    Args:
+        in_data: dictionary received from POST request
+
+    Returns:
+        boolean: if in_data contains the correct fields
+    """
+    expected_keys = {"patient_id", "heart_rate_average_since"}
+    for key in in_data.keys():
+        if key not in expected_keys:
+            return False
+    return True
+
+
+def validate_timestamp(timestamp):  # test
+    """Validates timestamp input for correct format
+
+    Args:
+        timestamp: datetime string
+
+    Returns:
+        boolean: if string is in correct format
+    """
+    try:
+        datetime_input = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f')
+    except ValueError:
+        return False
+    return datetime_input
+
+
+def find_avg_since(index, dt, patients):  # test
+    """Calculates average of previous heart rates since specified date/time
+
+    Args:
+        index (int): index of patient to be located in list
+        dt (datetime): datetime
+        patients (dictionary): list of patients in database
+
+    Returns:
+        int: average heart rate
+    """
+    HR_list = patients[index]["heart_rate"]
+    time_list = patients[index]["time_stamp"]
+    sum = 0
+    length = 0
+    for i in range(len(time_list)):
+        if dt > datetime.strptime(time_list[i], '%Y-%m-%d %H:%M:%S.%f'):
+            continue
+        sum += HR_list[i]
+        length += 1
+    if length == 0:
+        return False
+    avg_HR_since = sum / length
+    return int(avg_HR_since)
+
+
+@app.route("/api/heart_rate/interval_average", methods=["POST"])
+def get_avg_since():
+    """POST request finding the average, as an int, of all heart rates posted
+       for specified patient since the given date/time
+
+    Args:
+        None
+
+    Returns:
+        JSON: average heart rate since given date/time, as an integer
+    """
+
+    in_data = request.get_json()
+    good_info = validate_interval_avg_data(in_data)
+    if good_info is False:
+        return jsonify("ERROR: Invalid keys."), 400
+
+    patient_id_input = in_data["patient_id"]  # integer or numeric string
+    patient_id = validate_numeric(patient_id_input)
+    if patient_id is False:
+        return jsonify("ERROR: ID must be a number."), 400
+
+    index = find_patient(patient_id, patients)
+    if index is False:
+        return jsonify("ERROR: patient not on file."), 400
+
+    datetime_str = in_data["heart_rate_average_since"]
+    dt = validate_timestamp(datetime_str)
+    if dt is False:
+        return jsonify("ERROR: timestamp not in correct format."), 400
+
+    average = find_avg_since(index, dt, patients)
+    if average is False:
+        return jsonify("ERROR: no heart rates since given date."), 409
+    return jsonify(average)
 
 
 if __name__ == "__main__":
