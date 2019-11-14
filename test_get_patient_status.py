@@ -3,30 +3,37 @@ from datetime import datetime
 
 
 @pytest.mark.parametrize("index, expected", [
-                (0, {"heart_rate": 100,
-                     "status": "not tachycardic",
-                     "timestamp": datetime(2019, 11, 11, 9, 35, 15, 176049)}),
-                (1, False),
-                (2, {"heart_rate": 115,
-                     "status": "not tachycardic",
-                     "timestamp": datetime(2019, 11, 11, 11, 44, 37, 701431)}),
-                (3, {"heart_rate": 134,
-                     "status": "tachycardic",
-                     "timestamp": datetime(2019, 11, 12, 12, 42, 27, 201431)}),
-                (4, {"heart_rate": 110,
-                     "status": "tachycardic",
-                     "timestamp": datetime(2019, 11, 11, 9, 35, 15, 176049)}),
-                (5, {"heart_rate": 70,
-                     "status": "not tachycardic",
-                     "timestamp": datetime(2019, 11, 12, 12, 42, 27, 201431)}),
-                (6, {"heart_rate": 131,
-                     "status": "tachycardic",
-                     "timestamp": datetime(2019, 11, 12, 12, 42, 27, 201431)}),
-                (7, False),
-                (8, False),
-                (9, {"heart_rate": 99,
-                     "status": "not tachycardic",
-                     "timestamp": datetime(2019, 11, 12, 12, 42, 27, 201431)})
+    (0, {"heart_rate": 100,
+         "status": "not tachycardic",
+         "timestamp": datetime(2019, 11, 11, 9, 35, 15,
+                               176049).strftime('%Y-%m-%d %H:%M:%S.%f')}),
+    (1, False),
+    (2, {"heart_rate": 115,
+         "status": "not tachycardic",
+         "timestamp": datetime(2019, 11, 11, 11, 44, 37,
+                               701431).strftime('%Y-%m-%d %H:%M:%S.%f')}),
+    (3, {"heart_rate": 134,
+         "status": "tachycardic",
+         "timestamp": datetime(2019, 11, 12, 12, 42, 27,
+                               201431).strftime('%Y-%m-%d %H:%M:%S.%f')}),
+    (4, {"heart_rate": 110,
+         "status": "tachycardic",
+         "timestamp": datetime(2019, 11, 11, 9, 35, 15,
+                               176049).strftime('%Y-%m-%d %H:%M:%S.%f')}),
+    (5, {"heart_rate": 70,
+         "status": "not tachycardic",
+         "timestamp": datetime(2019, 11, 12, 12, 42, 27,
+                               201431).strftime('%Y-%m-%d %H:%M:%S.%f')}),
+    (6, {"heart_rate": 131,
+         "status": "tachycardic",
+         "timestamp": datetime(2019, 11, 12, 12, 42, 27,
+                               201431).strftime('%Y-%m-%d %H:%M:%S.%f')}),
+    (7, False),
+    (8, False),
+    (9, {"heart_rate": 99,
+         "status": "not tachycardic",
+         "timestamp": datetime(2019, 11, 12, 12, 42, 27,
+                               201431).strftime('%Y-%m-%d %H:%M:%S.%f')})
 ])
 def test_get_patient_status(index, expected):
     """Unit test for the get_patient_status() function in my_server.py
@@ -46,7 +53,8 @@ def test_get_patient_status(index, expected):
         "patient_age": 50,
         "heart_rate": [100],
         "status": "not tachycardic",
-        "time_stamp": [datetime(2019, 11, 11, 9, 35, 15, 176049)]
+        "time_stamp": [datetime(2019, 11, 11, 9, 35, 15,
+                                176049).strftime('%Y-%m-%d %H:%M:%S.%f')]
         }
     p2 = {
         "patient_id": 103,
@@ -62,8 +70,10 @@ def test_get_patient_status(index, expected):
         "patient_age": 4,
         "heart_rate": [120, 115],
         "status": "not tachycardic",
-        "time_stamp": [datetime(2018, 10, 11, 9, 44, 37, 901441),
-                       datetime(2019, 11, 11, 11, 44, 37, 701431)]
+        "time_stamp": [datetime(2018, 10, 11, 9, 44, 37,
+                                901441).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                       datetime(2019, 11, 11, 11, 44, 37,
+                                701431).strftime('%Y-%m-%d %H:%M:%S.%f')]
         }
     p4 = {
         "patient_id": 1,
@@ -71,8 +81,10 @@ def test_get_patient_status(index, expected):
         "patient_age": 7,
         "heart_rate": [120, 134],
         "status": "tachycardic",
-        "time_stamp": [datetime(2018, 8, 11, 9, 20, 12, 601231),
-                       datetime(2019, 11, 12, 12, 42, 27, 201431)]
+        "time_stamp": [datetime(2018, 8, 11, 9, 20, 12,
+                                601231).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                       datetime(2019, 11, 12, 12, 42, 27,
+                                201431).strftime('%Y-%m-%d %H:%M:%S.%f')]
         }
     p5 = {
         "patient_id": 25,
@@ -80,7 +92,8 @@ def test_get_patient_status(index, expected):
         "patient_age": 98,
         "heart_rate": [110],
         "status": "tachycardic",
-        "time_stamp": [datetime(2019, 11, 11, 9, 35, 15, 176049)]
+        "time_stamp": [datetime(2019, 11, 11, 9, 35, 15,
+                                176049).strftime('%Y-%m-%d %H:%M:%S.%f')]
         }
     p6 = {
         "patient_id": 19,
@@ -88,9 +101,12 @@ def test_get_patient_status(index, expected):
         "patient_age": 23,
         "heart_rate": [60, 65, 70],
         "status": "not tachycardic",
-        "time_stamp": [datetime(2018, 8, 11, 9, 20, 12, 601231),
-                       datetime(2019, 11, 11, 9, 35, 15, 176049),
-                       datetime(2019, 11, 12, 12, 42, 27, 201431)]
+        "time_stamp": [datetime(2018, 8, 11, 9, 20, 12,
+                                601231).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                       datetime(2019, 11, 11, 9, 35, 15,
+                                176049).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                       datetime(2019, 11, 12, 12, 42, 27,
+                                201431).strftime('%Y-%m-%d %H:%M:%S.%f')]
         }
     p7 = {
         "patient_id": 22,
@@ -98,9 +114,12 @@ def test_get_patient_status(index, expected):
         "patient_age": 8,
         "heart_rate": [100, 120, 131],
         "status": "tachycardic",
-        "time_stamp": [datetime(2018, 8, 11, 9, 20, 12, 601231),
-                       datetime(2019, 11, 11, 9, 35, 15, 176049),
-                       datetime(2019, 11, 12, 12, 42, 27, 201431)]
+        "time_stamp": [datetime(2018, 8, 11, 9, 20, 12,
+                                601231).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                       datetime(2019, 11, 11, 9, 35, 15,
+                                176049).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                       datetime(2019, 11, 12, 12, 42, 27,
+                                201431).strftime('%Y-%m-%d %H:%M:%S.%f')]
         }
     p8 = {
         "patient_id": 100,
@@ -124,8 +143,10 @@ def test_get_patient_status(index, expected):
         "patient_age": 32,
         "heart_rate": [100, 99],
         "status": "not tachycardic",
-        "time_stamp": [datetime(2018, 8, 11, 9, 20, 12, 601231),
-                       datetime(2019, 11, 12, 12, 42, 27, 201431)]
+        "time_stamp": [datetime(2018, 8, 11, 9, 20, 12,
+                                601231).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                       datetime(2019, 11, 12, 12, 42, 27,
+                                201431).strftime('%Y-%m-%d %H:%M:%S.%f')]
         }
 
     patients = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
