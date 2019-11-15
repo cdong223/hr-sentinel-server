@@ -1,6 +1,11 @@
 from flask import Flask, jsonify, request
 from datetime import datetime
 import logging
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+SENDGRID_API_KEY = "SG.S-YUEKFSTyyWC9z7skPcTQ." \
+    "LHzqmNkgRAJkOE7utSRB28Y4TQJ0lFK6-l0wm7olnYU"
 
 
 app = Flask(__name__)
@@ -204,13 +209,29 @@ def add_heart_rate():
     if index is False:
         return jsonify("ERROR: patient not on file."), 400
 
-    response = add_HR_data(index, heart_rate, timestamp, patients)
-    if response == "not tachycardic":
-        return jsonify(response)
+    result = add_HR_data(index, heart_rate, timestamp, patients)
+    if result == "not tachycardic":
+        return jsonify(result)
     else:
-        logging.info("Tachycardic: ID: {}, HR: {}, Attending email: {}".format(
-                     patient_id, heart_rate, response[0]))
-        return jsonify("{}: {} has a HR of {} at {}".format(response[0],
+        logging.info("Tachycardic! ID: {}, HR: {}, Attending email: {}".format(
+                     patient_id, heart_rate, result))
+        message = Mail(
+            from_email="hrsentinelserver_cdong223@email.com",
+            to_emails=result,
+            subject="Patient #{} is Tachycardic".format(patient_id),
+            html_content="""Patient ID: {},
+                            Heart Rate: {},
+                            Time Stamp: {}""".format(patient_id, heart_rate,
+                                                     timestamp))
+        try:
+            sg = SendGridAPIClient(os.environ.get(SENDGRID_API_KEY))
+            response = sg.send(message)
+            print(response.status_code)
+            print(response.body)
+            print(response.headers)
+        except Exception as e:
+            print(str(e))
+        return jsonify("{}: {} has a HR of {} at {}".format(result,
                                                             patient_id,
                                                             heart_rate,
                                                             timestamp))
