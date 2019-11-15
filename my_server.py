@@ -177,6 +177,25 @@ def validate_HR_data(in_data):  # test
     return True
 
 
+def send_email(addr, patient_id, heart_rate, timestamp):
+    message = Mail(
+        from_email="hrsentinelserver_cdong223@email.com",
+        to_emails=addr,
+        subject="Patient #{} is Tachycardic".format(patient_id),
+        html_content="""Patient ID: {},
+                        Heart Rate: {},
+                        Time Stamp: {}""".format(patient_id, heart_rate,
+                                                 timestamp))
+    try:
+        sg = SendGridAPIClient(os.environ.get(SENDGRID_API_KEY))
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        print(str(e))
+
+
 @app.route("/api/heart_rate", methods=["POST"])
 def add_heart_rate():
     """Stores the sent heart rate measurement in the record for the specified
@@ -215,22 +234,7 @@ def add_heart_rate():
     else:
         logging.info("Tachycardic! ID: {}, HR: {}, Attending email: {}".format(
                      patient_id, heart_rate, result))
-        message = Mail(
-            from_email="hrsentinelserver_cdong223@email.com",
-            to_emails=result,
-            subject="Patient #{} is Tachycardic".format(patient_id),
-            html_content="""Patient ID: {},
-                            Heart Rate: {},
-                            Time Stamp: {}""".format(patient_id, heart_rate,
-                                                     timestamp))
-        try:
-            sg = SendGridAPIClient(os.environ.get(SENDGRID_API_KEY))
-            response = sg.send(message)
-            print(response.status_code)
-            print(response.body)
-            print(response.headers)
-        except Exception as e:
-            print(str(e))
+        send_email(result, patient_id, heart_rate, timestamp)
         return jsonify("{}: {} has a HR of {} at {}".format(result,
                                                             patient_id,
                                                             heart_rate,
