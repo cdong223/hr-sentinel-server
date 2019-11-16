@@ -1,12 +1,6 @@
 import requests
 
 
-def check_patients_list():
-    r = requests.get("http://127.0.0.1:5000/patients")
-    a = r.json()
-    print(a)
-
-
 def average_since():
     p1 = {
         "patient_id": 2,
@@ -108,18 +102,17 @@ def add_patient():
     a1 = r1.json()
     a2 = r2.json()
     a3 = r3.json()
-    # print(a1)
-    # print(r1.status_code)
-    # print(a2)
-    # print(r2.status_code)
-    # print(a3)
-    # print(r3.status_code)
+    print(a1)
+    print(r1.status_code)
+    print(a2)
+    print(r2.status_code)
+    print(a3)
+    print(r3.status_code)
 
 
 if __name__ == "__main__":
     add_patient()
     add_heart_rate()
-    # check_patients_list()
     # check_status()
     # check_HR_list()
     # check_avg_HR()

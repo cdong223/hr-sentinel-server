@@ -12,11 +12,6 @@ app = Flask(__name__)
 patients = []
 
 
-@app.route("/patients", methods=["GET"])
-def get_patients_list():
-    return jsonify(patients)
-
-
 def validate_numeric(input):  # test
     """Validates input to see if it's an int or integer numeric string
 
@@ -88,7 +83,7 @@ def add_new_patient():
         }
     patients.append(return_dictionary)
     logging.info("New patient registered, ID: {}".format(patient_id))
-    return jsonify(return_dictionary)
+    return jsonify(return_dictionary), 200
 
 
 def is_tachycardic(heart_rate, patient_age):  # test
@@ -129,8 +124,8 @@ def add_HR_data(index, heart_rate, timestamp, patients):  # test
         patients (dictionary): list of patients in database
 
     Returns:
-        str: email of attending if patient is tachycardic, "not tachycardic"
-             otherwise
+        str: email of attending if patient is tachycardic,
+             "not tachycardic" otherwise
     """
     patient = patients[index]
     patient["heart_rate"].append(heart_rate)
@@ -178,6 +173,17 @@ def validate_HR_data(in_data):  # test
 
 
 def send_email(addr, patient_id, heart_rate, timestamp):
+    """Retrieves the index corresponding to a specified patient
+
+    Args:
+        addr (str): email address of attending
+        patient_id (int): ID of patient to be located in list
+        heart_rate (int): most recent heart rate added
+        timestamp (str): date/time stamp corresponding to recent POST
+
+    Returns:
+        None
+    """
     message = Mail(
         from_email="hrsentinelserver_cdong223@email.com",
         to_emails=addr,
@@ -230,7 +236,7 @@ def add_heart_rate():
 
     result = add_HR_data(index, heart_rate, timestamp, patients)
     if result == "not tachycardic":
-        return jsonify(result)
+        return jsonify(result), 200
     else:
         logging.info("Tachycardic! ID: {}, HR: {}, Attending email: {}".format(
                      patient_id, heart_rate, result))
@@ -238,7 +244,7 @@ def add_heart_rate():
         return jsonify("{}: {} has a HR of {} at {}".format(result,
                                                             patient_id,
                                                             heart_rate,
-                                                            timestamp))
+                                                            timestamp)), 200
 
 
 def get_patient_status(index, patients):  # test
@@ -287,8 +293,8 @@ def get_status(patient_id):
 
     return_dictionary = get_patient_status(index, patients)
     if return_dictionary is False:
-        return jsonify("ERROR: Patient has no heart rate data on file"), 400
-    return jsonify(return_dictionary)
+        return jsonify("ERROR: Patient has no heart rate data on file"), 404
+    return jsonify(return_dictionary), 200
 
 
 def get_list(index, patients):  # test
@@ -328,8 +334,8 @@ def get_HR_list(patient_id):
 
     list = get_list(index, patients)
     if list is False:
-        return jsonify("ERROR: Patient has no heart rate data on file"), 400
-    return jsonify(list)
+        return jsonify("ERROR: Patient has no heart rate data on file"), 404
+    return jsonify(list), 200
 
 
 def calc_avg_HR(list):  # test
@@ -368,9 +374,9 @@ def get_avg_HR(patient_id):
 
     list = get_list(index, patients)
     if list is False:
-        return jsonify("ERROR: Patient has no heart rate data on file"), 400
+        return jsonify("ERROR: Patient has no heart rate data on file"), 404
     avg_HR = calc_avg_HR(list)
-    return jsonify(avg_HR)
+    return jsonify(avg_HR), 200
 
 
 def validate_interval_avg_data(in_data):  # test
@@ -464,8 +470,8 @@ def get_avg_since():
 
     average = find_avg_since(index, dt, patients)
     if average is False:
-        return jsonify("ERROR: no heart rates since given date."), 409
-    return jsonify(average)
+        return jsonify("ERROR: no heart rates since given date."), 404
+    return jsonify(average), 200
 
 
 if __name__ == "__main__":
